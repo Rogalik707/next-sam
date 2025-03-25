@@ -74,9 +74,19 @@ export default function Home() {
 
   // Start encoding image
   const encodeImageClick = async () => {
+    // Получаем данные изображения из canvas
+    const canvas = image;  // image уже содержит canvas с изображением
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, 'image/jpeg', 0.95);
+    });
+    
+    // Конвертируем Blob в ArrayBuffer
+    const imageData = await blob.arrayBuffer();
+
+    // Отправляем исходные данные изображения
     samWorker.current.postMessage({
       type: "encodeImage",
-      data: canvasToFloat32Array(resizeCanvas(image, imageSize)),
+      data: { imageData }
     });
 
     setLoading(true);
